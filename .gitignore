@@ -1,0 +1,4 @@
+tmp/
+__pycache__
+data/stops.csv
+data/lines.csv
