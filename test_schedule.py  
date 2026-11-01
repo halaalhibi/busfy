@@ -1,0 +1,31 @@
+from datetime import datetime
+from zoneinfo import ZoneInfo
+import schedule
+
+route = {
+    "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+    "start_hour": 6,
+    "end_hour": 0
+}
+
+monday_morning = datetime(
+    2024, 1, 1, 8, 0,
+    tzinfo=ZoneInfo("Europe/Istanbul")
+)
+
+sunday_morning = datetime(
+    2024, 1, 7, 8, 0,
+    tzinfo=ZoneInfo("Europe/Istanbul")
+)
+
+assert schedule.is_in_commute_window(route, monday_morning) == True
+assert schedule.is_in_commute_window(route, sunday_morning) == False
+
+profile = {"routes": [route]}
+active_routes = schedule.has_any_active_route(profile, monday_morning)
+assert active_routes == [route]
+
+current_time = schedule.get_current_istanbul_time()
+assert current_time.tzinfo.key == "Europe/Istanbul"
+
+print("All schedule checks passed!")
