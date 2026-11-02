@@ -22,10 +22,9 @@ def classify_state(distance_meters: float) -> str:
 
 
 def should_trigger_leave_now(eta_minutes: float, walk_minutes: int) -> bool:
-   """
-   This function returns weather to leave now or not based on  walk_minutes to the bus station
-   """
-    
+    """
+    This function returns weather to leave now or not based on  walk_minutes to the bus station
+    """
     if eta_minutes <= walk_minutes:
         return True
     else:

@@ -1,11 +1,14 @@
 """
 This Module Contains Constants Variables and File Paths
 """
+from pathlib import Path
+
 # File Paths
+SCRIPT_DIR = Path(__file__).resolve().parent
 PROFILE_PATH = "data/profile.json"
 STATE_PATH = "data/state.json"
-# STOPS_PATH = "data/stops.csv"
-# LINES_PATH = "data/lines.csv"
+STOPS_PATH = "data/stops.json"
+LINES_PATH = "data/lines.json"
 
 #Threshold
 APPROACHING_DISTANCE_METERS = 1000
@@ -16,4 +19,16 @@ def ensure_directories():
     """
     This Function Checks for the Data directory to ensure existing, if not, creates it.
     """
-    pass
+    try:
+        (SCRIPT_DIR / "data").mkdir(parents=True, exist_ok=True)
+        if not (SCRIPT_DIR / PROFILE_PATH).exists():
+            return False
+        if not (SCRIPT_DIR / STATE_PATH).exists():
+            return False
+        if not (SCRIPT_DIR / LINES_PATH).exists():
+            return False
+        if not (SCRIPT_DIR / STOPS_PATH).exists():
+            return False
+    except FileExistsError:
+        return False
+    return True

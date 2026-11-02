@@ -50,7 +50,7 @@ def record_request(state):
     """
     This function will add the request counter in our state dictionary after every request that have been made.
     """
-    state["HOURLY_REQUESTS"] += 1
+    state["HOURLY_REQUESTS"] = state.get("HOURLY_REQUESTS", 0) + 1
 
 
 def fetch_buses_for_line(line_code: str, state: dict) -> list[dict]:
@@ -87,7 +87,8 @@ def fetch_all_stops(state) -> str:
     it'll return a csv text containing all the stops available in the IETT API
     """
     if can_make_request(state):
-        response = send_request("Schedule","GetDurak_csv", DurakKodu="")
+        response = send_request("Schedule","GetDurak_json", DurakKodu="")
+        record_request(state)
         if not  response:
             return ""
         return response
@@ -99,7 +100,8 @@ def fetch_all_lines(state) -> str:
     it'll return a csv text containing all the lines available in the IETT API
     """
     if can_make_request(state):
-        response = send_request("Schedule","GetHat_csv", HatKodu="")
+        response = send_request("Schedule","GetHat_json", HatKodu="")
+        record_request(state)
         if not  response:
             return ""
         return response
