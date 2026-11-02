@@ -11,7 +11,7 @@ def is_valid_coordinate(lat: float, lon: float) -> bool:
         Latitude: 40.5 to 41.6,
         Longitude: 28.0 to 30.0
     """
-     try:
+    try:
         lat = float(lat)
         lon = float(lon)
     except (TypeError, ValueError, OverflowError):
@@ -63,7 +63,7 @@ def parse_bus_record(raw_dict: dict) -> dict | None:
     """
     To validate any corrupted response from the IETT API
     """
-if not isinstance(raw_dict, dict):
+    if not isinstance(raw_dict, dict):
         return None
 
     def get_value(*keys):
