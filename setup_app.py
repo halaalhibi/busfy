@@ -245,7 +245,7 @@ def main():
     st.divider()
 
     # 4. View and Manage Existing Routes
-    st.header("📋 Your Configured Routes")
+    st.header("Your Configured Routes")
     saved_routes = profile.get("routes", [])
 
     if not saved_routes:
@@ -264,11 +264,11 @@ def main():
                     st.write(f"**Hours:** {route['start_hour']: 02d}: 00 to {route['end_hour']: 02d}: 00 ")
                     st.write(f"**Active Alerts:** {''.join(route['alerts'])}")
 
-         # Delete button with a unique key per route
-        if st.button("Delete Route",key=f"delete_route_{index}"):
-            profile["routes"].pop(index)
-            save_profile(profile)
-            st.rerun()
+             # Delete button with a unique key per route
+                if st.button("Delete Route",key=f"delete_route_{index}"):
+                    profile["routes"].pop(index)
+                    save_profile(profile)
+                    st.rerun()
 
 if __name__ == "__main__":
     main()
