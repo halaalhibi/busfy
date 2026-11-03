@@ -210,7 +210,7 @@ def main():
     st.divider()
 
     # 3. Add a New Route Form
-    st.header("➕ Add a Commute Route")
+    st.header("Add a Commute Route")
     route_name = st.text_input(
         "Route Name",
         placeholder="e.g. Morning to Campus",

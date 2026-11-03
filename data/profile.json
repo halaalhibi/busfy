@@ -1,0 +1,33 @@
+{
+  "user": "student",
+  "ntfy_topic": "busfy-alerts_292929292929",
+  "routes": [
+    {
+      "name": "campus_to_home",
+      "line": "50H",
+      "stop": {
+        "id": 185761,
+        "name": "İSTİNYE ÜNİVERSİTESİ KAMPÜSÜ",
+        "district": "Kagithane",
+        "lat": 41.1018302976401,
+        "lon": 28.9748280531044
+      },
+      "working_days": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri"
+      ],
+      "start_hour": 7,
+      "end_hour": 9,
+      "walk_minutes": 6,
+      "alerts": [
+        "approaching",
+        "leave_now",
+        "arrived",
+        "disruption"
+      ]
+    }
+  ]
+}

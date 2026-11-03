@@ -94,7 +94,7 @@ def run_monitoring_cycle(profile: dict, state: dict):
             if event_type not in enabled_alerts:
                 continue
             bus_id = event.get("bus_id")
-            debup_key = dedup.build_dedup_key(event_type, bus_id, date_str)
+            debup_key = dedup.build_dedup_key(event_type, route_name,bus_id, date_str)
             if dedup.is_already_sent(state, debup_key):
                 continue
 
