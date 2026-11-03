@@ -5,3 +5,4 @@ data/lines.csv
 .idea/
 testing/
 .venv/
+.env
