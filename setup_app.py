@@ -252,7 +252,7 @@ def main():
             st.info("No routes added yet. Use the form above to add your first route!")
         else:
             for index, route in enumerate(saved_routes):
-                with st.expander(f"📍 {route['name']} (Line: {route['line']})", expanded=True):
+                with st.expander(f"{route['name']} (Line: {route['line']})", expanded=True):
                     col1, col2 = st.columns(2)
             with col1:
                 st.write(f"**Stop:** {route['stop']['name']} ({route['stop']['district']})")
@@ -265,7 +265,7 @@ def main():
                 st.write(f"**Active Alerts:** {''.join(route['alerts'])}")
 
              # Delete button with a unique key per route
-            if st.button("🗑️ Delete Route",key=f"delete_route_{index}"):
+            if st.button("Delete Route",key=f"delete_route_{index}"):
                 profile["routes"].pop(index)
                 save_profile(profile)
                 st.rerun()

@@ -35,7 +35,6 @@ def detect_events(current_buses: list[dict], route: dict, state: dict) -> list[d
     This function is responsible for detecting events based on current buses and route
     It acts as the main state machine.
     """
-
     events = []
     bus_states = state.setdefault("bus_states", {})
 

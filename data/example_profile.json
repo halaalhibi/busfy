@@ -1,0 +1,39 @@
+  {
+      "user": "student",
+      "ntfy_topic": "busfy-student-ayse",
+      "routes": [
+        {
+          "name": "Morning to Campus",
+          "line": "79E",
+          "stop": {
+            "id": 100022,
+            "name": "OKTAY RIFAT CADDESİ",
+            "district": "Esenyurt",
+            "lat": 41.004605,
+            "lon": 28.695235
+          },
+          "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+          "start_hour": 7,
+          "end_hour": 9,
+          "walk_minutes": 6,
+          "alerts": ["approaching", "leave_now", "arrived",
+          "disruption"]
+        },
+        {
+          "name": "Evening Return Home",
+          "line": "79E",
+          "stop": {
+            "id": 105767,
+            "name": "EMİNÖNÜ",
+            "district": "Fatih",
+            "lat": 41.021208,
+            "lon": 28.959667
+          },
+          "working_days": ["Mon", "Tue", "Wed", "Thu", "Fri"],
+          "start_hour": 17,
+          "end_hour": 19,
+          "walk_minutes": 10,
+          "alerts": ["approaching", "arrived"]
+        }
+      ]
+    }
