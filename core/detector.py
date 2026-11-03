@@ -67,12 +67,15 @@ def detect_events(current_buses: list[dict], route: dict, state: dict) -> list[d
 
         distance_meters = bus.get("distance_meters")
 
+        stop_data = route.get("stop", {})
+        stop_lat = route.get("stop_lat") or stop_data.get("lat")
+        stop_lon = route.get("stop_lon") or stop_data.get("lon")
         if distance_meters is None:
             coordinates = (
                 bus.get("lat"),
                 bus.get("lon"),
-                route.get("stop_lat"),
-                route.get("stop_lon")
+                stop_lat,
+                stop_lon
             )
 
             if any(value is None for value in coordinates):

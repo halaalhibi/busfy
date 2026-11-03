@@ -221,7 +221,7 @@ def main():
     selected_line = render_line_selector(lines_df)
     timing_settings = render_commute_window_picker()
 
-    if st.button("💾 Save Route"):
+    if st.button("Save Route"):
         if not route_name:
             st.error("Please give your route a name (e.g. 'Morningto Campus').")
         elif not selected_stop:
@@ -242,33 +242,33 @@ def main():
             save_profile(profile)
             st.success(f"Route '{route_name}' saved successfully!")
             st.rerun()
-        st.divider()
+    st.divider()
 
-        # 4. View and Manage Existing Routes
-        st.header("📋 Your Configured Routes")
-        saved_routes = profile.get("routes", [])
+    # 4. View and Manage Existing Routes
+    st.header("📋 Your Configured Routes")
+    saved_routes = profile.get("routes", [])
 
-        if not saved_routes:
-            st.info("No routes added yet. Use the form above to add your first route!")
-        else:
-            for index, route in enumerate(saved_routes):
-                with st.expander(f"{route['name']} (Line: {route['line']})", expanded=True):
-                    col1, col2 = st.columns(2)
-            with col1:
-                st.write(f"**Stop:** {route['stop']['name']} ({route['stop']['district']})")
-                st.write(f"**Stop Code:** `{route['stop']['id']}` ")
-                st.write(f"**Walk Time:** {route['walk_minutes']} minutes")
-            with col2:
-                days_str = ", ".join(route["working_days"])
-                st.write(f"**Days:** {days_str}")
-                st.write(f"**Hours:** {route['start_hour']: 02d}: 00 to {route['end_hour']: 02d}: 00 ")
-                st.write(f"**Active Alerts:** {''.join(route['alerts'])}")
+    if not saved_routes:
+        st.info("No routes added yet. Use the form above to add your first route!")
+    else:
+        for index, route in enumerate(saved_routes):
+            with st.expander(f"{route['name']} (Line: {route['line']})", expanded=True):
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.write(f"**Stop:** {route['stop']['name']} ({route['stop']['district']})")
+                    st.write(f"**Stop Code:** `{route['stop']['id']}` ")
+                    st.write(f"**Walk Time:** {route['walk_minutes']} minutes")
+                with col2:
+                    days_str = ", ".join(route["working_days"])
+                    st.write(f"**Days:** {days_str}")
+                    st.write(f"**Hours:** {route['start_hour']: 02d}: 00 to {route['end_hour']: 02d}: 00 ")
+                    st.write(f"**Active Alerts:** {''.join(route['alerts'])}")
 
-             # Delete button with a unique key per route
-            if st.button("Delete Route",key=f"delete_route_{index}"):
-                profile["routes"].pop(index)
-                save_profile(profile)
-                st.rerun()
+         # Delete button with a unique key per route
+        if st.button("Delete Route",key=f"delete_route_{index}"):
+            profile["routes"].pop(index)
+            save_profile(profile)
+            st.rerun()
 
 if __name__ == "__main__":
     main()
