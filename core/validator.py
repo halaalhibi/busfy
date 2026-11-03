@@ -6,6 +6,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from math import isfinite
 
+
 ISTANBUL_TZ = ZoneInfo("Europe/Istanbul")
 
 def is_valid_coordinate(lat: float, lon: float) -> bool:

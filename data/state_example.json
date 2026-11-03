@@ -1,0 +1,32 @@
+[
+  {
+    "Before_Starting_APP":
+    {
+      "HOURLY_REQUESTS": 0,
+      "RATE_LIMIT_HOUR": 0,
+      "bus_states": {},
+      "sent_notifications": []
+    }
+    ,
+
+    "After_Running_App" :
+    {
+      "HOURLY_REQUESTS": 24,
+      "RATE_LIMIT_HOUR": 18,
+      "bus_states": {
+        "B4023": {
+          "status": "APPROACHING",
+          "leave_now_sent": true
+        },
+        "T1073": {
+          "status": "FAR",
+          "leave_now_sent": false
+        }
+      },
+      "sent_notifications": [
+        "APPROACHING|Morning to Campus|B4023|2026-11-03",
+        "LEAVE_NOW|Morning to Campus|B4023|2026-11-03"
+      ]
+    }
+  }
+]

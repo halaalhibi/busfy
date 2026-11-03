@@ -6,13 +6,13 @@ It acts as our state machine.
 from config import ARRIVED_DISTANCE_METERS, APPROACHING_DISTANCE_METERS
 from core.geo import haversine_distance
 from math import isfinite
+from core.geo import haversine_distance, estimate_eta_minutes
 
 def classify_state(distance_meters: float) -> str:
     """
     This Function is responsible for classifying the state of the bus from meters to string such as
     "APPROACHING"
     """
-
     if distance_meters <= ARRIVED_DISTANCE_METERS:
         return "ARRIVED"
     elif distance_meters <= APPROACHING_DISTANCE_METERS:
@@ -101,25 +101,36 @@ def detect_events(current_buses: list[dict], route: dict, state: dict) -> list[d
         previous = bus_states.get(bus_id, {})
         previous_state = previous.get("status")
 
+        eta_minutes = bus.get("eta_minutes")
+        if eta_minutes is None and distance_meters is not None:
+            eta_minutes = estimate_eta_minutes(distance_meters)
+        walk_minutes = route.get("walk_minutes")
+        leave_now = False
+
         if previous_state is not None:
 
             if bus_state == "APPROACHING" and previous_state == "FAR":
                 events.append({
                     "type": "APPROACHING",
                     "line": line,
-                    "bus_id": bus_id
+                    "bus_id": bus_id,
+                    "distance_meters": distance_meters,
+                    "eta_minutes": eta_minutes,
+                    "bus": bus,
+                    "route": route,
                 })
 
             if bus_state == "ARRIVED" and previous_state != "ARRIVED":
                 events.append({
                     "type": "ARRIVED",
                     "line": line,
-                    "bus_id": bus_id
+                    "bus_id": bus_id,
+                    "distance_meters": distance_meters,
+                    "eta_minutes": eta_minutes,
+                    "bus": bus,
+                    "route": route,
                 })
 
-        eta_minutes = bus.get("eta_minutes")
-        walk_minutes = route.get("walk_minutes")
-        leave_now = False
 
         if eta_minutes is not None and walk_minutes is not None:
             try:
@@ -146,7 +157,11 @@ def detect_events(current_buses: list[dict], route: dict, state: dict) -> list[d
             events.append({
                 "type": "LEAVE_NOW",
                 "line": line,
-                "bus_id": bus_id
+                "bus_id": bus_id,
+                "distance_meters": distance_meters,
+                "eta_minutes": eta_minutes,
+                "bus": bus,
+                "route": route,
             })
 
         bus_states[bus_id] = {
@@ -159,5 +174,3 @@ def detect_events(current_buses: list[dict], route: dict, state: dict) -> list[d
         }
 
     return events
-
-

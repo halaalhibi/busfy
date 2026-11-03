@@ -4,7 +4,11 @@ There's a note that the IETT API
 """
 import zeep
 import json
-import wsdl_cleaner
+import api.wsdl_cleaner as wsdl_cleaner
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+ISTANBUL_TZ = ZoneInfo("Europe/Istanbul")
 
 clients = {}
 
@@ -39,11 +43,17 @@ def send_request(service: str, operation: str, retries: int = 2, **kwargs) -> st
 
 def can_make_request(state, max_rate=95) -> bool:
     """
-    This function checks if we can make a request to the IETT API, according to the max_rate.
+    Checks if we are within the hourly budget. Resets counter
+    each new hour.
     """
-    if state.get("HOURLY_REQUESTS", 0) < max_rate:
-        return True
-    return False
+    current_hour = datetime.now(ISTANBUL_TZ).hour
+    last_hour = state.get("RATE_LIMIT_HOUR")
+
+    if last_hour != current_hour:
+        state["RATE_LIMIT_HOUR"] = current_hour
+        state["HOURLY_REQUESTS"] = 0
+
+    return state.get("HOURLY_REQUESTS", 0) < max_rate
 
 
 def record_request(state):
