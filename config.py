@@ -11,6 +11,7 @@ STOPS_PATH = "data/stops.json"
 LINES_PATH = "data/lines.json"
 
 #Threshold
+#TODO: Make a correct threshold that don't make the person who's using this app curse you
 APPROACHING_DISTANCE_METERS = 1000
 ARRIVED_DISTANCE_METERS = 150
 HOURLY_API_BUDGET = 95

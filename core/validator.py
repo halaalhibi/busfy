@@ -2,8 +2,11 @@
 This Module is Responsible for validating information.
 """
 
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from math import isfinite
+
+ISTANBUL_TZ = ZoneInfo("Europe/Istanbul")
 
 def is_valid_coordinate(lat: float, lon: float) -> bool:
     """
@@ -28,115 +31,59 @@ def is_timestamp_fresh(timestamp_str:str , max_age_minutes = 15) -> bool:
     """
     ensures that the given information aren't old, this ensures no wrong info are sent to the user
     """
+    if not isinstance(timestamp_str, str) or not timestamp_str.strip():
+        return False
+
     try:
-        max_age_minutes = float(max_age_minutes)
+        # Parse IETT timestamp format: "2026-11-03 17:30:15"
+        bus_time = datetime.strptime(timestamp_str.strip(),"%Y-%m-%d %H:%M:%S")
+        bus_time = bus_time.replace(tzinfo=ISTANBUL_TZ)
 
-        if not isfinite(max_age_minutes) or max_age_minutes < 0:
-            return False
-
-        if not isinstance(timestamp_str, str):
-            return False
-
-        timestamp_str = timestamp_str.strip()
-
-        if not timestamp_str:
-            return False
-
-        timestamp = datetime.fromisoformat(
-            timestamp_str.replace("Z", "+00:00")
-        )
-
-        if timestamp.tzinfo is None:
-            return False
-
-        now = datetime.now(timezone.utc)
-        age_minutes = (
-            now - timestamp.astimezone(timezone.utc)
-        ).total_seconds() / 60
+        now = datetime.now(ISTANBUL_TZ)
+        age_minutes = (now - bus_time).total_seconds() / 60.0
 
         return 0 <= age_minutes <= max_age_minutes
-
-    except (TypeError, ValueError, OverflowError):
+    except (ValueError, TypeError):
         return False
+
 
 def parse_bus_record(raw_dict: dict) -> dict | None:
     """
-    To validate any corrupted response from the IETT API
+    Validates and cleans a raw bus record from IETT's
+    GetHatOtoKonum_json.
+    Returns a clean dictionary with float coordinates, or None if
+    invalid.
     """
     if not isinstance(raw_dict, dict):
         return None
 
-    def get_value(*keys):
-        for key in keys:
-            value = raw_dict.get(key)
-            if value is not None and value != "":
-                return value
+    bus_id = raw_dict.get("kapino")
+    line = raw_dict.get("hatkodu")
+    lat_raw = raw_dict.get("enlem")
+    lon_raw = raw_dict.get("boylam")
+    direction = raw_dict.get("yon", "")
+    timestamp = raw_dict.get("son_konum_zamani", "")
+    nearest_stop = raw_dict.get("yakinDurakKodu")
+
+    # Essential fields check
+    if not bus_id or not line or lat_raw is None or lon_raw is None:
         return None
 
-    bus_id = get_value("bus_id", "kapino", "kapiNo", "vehicle_id")
-    line = get_value("line", "hatkodu", "hatKodu")
-    direction = get_value("direction", "yon", "yön")
-
-    lat = get_value("lat", "enlem", "latitude")
-    lon = get_value("lon", "boylam", "longitude")
-
-    if bus_id is None or line is None:
+    # Coordinate validation
+    if not is_valid_coordinate(lat_raw, lon_raw):
         return None
 
-    if not is_valid_coordinate(lat, lon):
+     # Timestamp freshness check (rejects ghost buses >15 min old)
+    if timestamp and not is_timestamp_fresh(timestamp, max_age_minutes=15):
         return None
 
-    bus_id = str(bus_id).strip()
-    line = str(line).strip()
-
-    if not bus_id or not line:
-        return None
-
-    result = {
-        "bus_id": bus_id,
-        "line": line,
-        "lat": float(lat),
-        "lon": float(lon)
+    return {
+        "bus_id": str(bus_id).strip(),
+        "line": str(line).strip(),
+        "lat": float(lat_raw),
+        "lon": float(lon_raw),
+        "direction": str(direction).strip(),
+        "timestamp": str(timestamp).strip(),
+        "nearest_stop_code": str(nearest_stop) if nearest_stop else
+        None,
     }
-
-    if direction is not None:
-        result["direction"] = str(direction).strip()
-
-    stop_ids = get_value("stop_ids")
-
-    if isinstance(stop_ids, (list, tuple, set)):
-        result["stop_ids"] = [str(s) for s in stop_ids]
-
-    distance = get_value("distance_meters")
-
-    if distance is not None:
-        try:
-            distance = float(distance)
-
-            if isfinite(distance) and distance >= 0:
-                result["distance_meters"] = distance
-
-        except (TypeError, ValueError, OverflowError):
-            pass
-
-    eta = get_value("eta_minutes")
-
-    if eta is not None:
-        try:
-            eta = float(eta)
-
-            if isfinite(eta) and eta >= 0:
-                result["eta_minutes"] = eta
-
-        except (TypeError, ValueError, OverflowError):
-            pass
-
-    timestamp = get_value("timestamp", "timestamp_str")
-
-    if timestamp is not None:
-        if not is_timestamp_fresh(timestamp):
-            return None
-
-        result["timestamp"] = timestamp
-
-    return result

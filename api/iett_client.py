@@ -71,6 +71,7 @@ def fetch_buses_for_line(line_code: str, state: dict) -> list[dict]:
         "son_konum_zamani": "2026-10-29 22:44:57",
         "yakinDurakKodu": "115191"
     }
+    This function will be the function that helps us track the bus location.
     """
     if can_make_request(state):
         response = send_request("Live_Vehicle","GetHatOtoKonum_json" ,HatKodu=line_code)
@@ -126,3 +127,10 @@ def fetch_announcements(state) -> list[dict]:
             return []
         return json.loads(response)
     return []
+
+
+
+"""
+Some TODO's in future:
+    add Fetch_planned seferler.
+"""
